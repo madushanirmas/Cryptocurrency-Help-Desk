@@ -1,0 +1,101 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+}
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Bitcoin Login</title>
+    <!-- Bootstrap core CSS-->
+    <link href="~/Content/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom fonts for this template-->
+    <link href="~/Content/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!-- Custom styles for this template-->
+    <link href="~/Content/css/sb-admin.css" rel="stylesheet">
+</head>
+
+<body class="bg-dark">
+    <div class="container" id="app">
+        <div class="card card-login mx-auto mt-5">
+            <div class="card-header">Login</div>
+            <div class="card-body">
+                <form v-on:submit="send">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input class="form-control" id="exampleInputEmail1" type="email" v-model="email" aria-describedby="emailHelp" placeholder="Enter email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Password</label>
+                        <input class="form-control" id="exampleInputPassword1" type="password" v-model="password" placeholder="Password" required>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> Remember Password
+                            </label>
+                        </div>
+                    </div>
+                    <input class="btn btn-primary btn-block" type="submit" value="Login">
+                </form>
+                <div class="text-center">
+                    <a class="d-block small mt-3"  href="/Home/register">Register an Account</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap core JavaScript-->
+    <script src="~/Content/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Content/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="~/Content/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.18/vue.min.js"></script>
+    <script>
+
+        new Vue({
+            el: '#app',
+            data: {           
+                email: '',
+                password: ''
+            },
+            methods: {
+                send: function (e) {
+                    e.preventDefault();
+
+                    if (this.email == "Admin@bitcoin.com" && this.password == "Admin") {
+                        alert("Successfully Logged In!");
+                        window.location.href = 'https://localhost:44319/Events/';
+                    }
+                    else {
+                        const requestOptions = {
+                            // method: "GET",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                email: this.email,
+                                password: this.password
+                            })
+                        };
+                        fetch("https://localhost:44319/api/Bitusers?email=" + this.email + "&password=" + this.password)
+                            .then(response => response.json())
+                            .then((data) => this.onSuccess())
+                            .catch((err) => this.onFailure())
+
+                    }
+
+                },
+                onSuccess: function () {
+                    localStorage.setItem('Userlogged', this.email);                  
+                    alert("Successfully Logged In!");
+                    window.location.href = 'https://localhost:44319/Home/BlogPost';
+                },
+                onFailure: function () {
+                    alert("Credentials Mis matched! Try again!");
+                }
+            }
+        })
+    </script>
+</body>

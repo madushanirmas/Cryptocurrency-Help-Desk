@@ -1,0 +1,142 @@
+﻿
+@{
+    ViewBag.Title = "Register";
+}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Bitcoin Register</title>
+    <!-- Bootstrap core CSS-->
+    <link href="~/Content/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom fonts for this template-->
+    <link href="~/Content/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!-- Custom styles for this template-->
+    <link href="~/Content/css/sb-admin.css" rel="stylesheet">
+</head>
+
+<body class="bg-dark">
+    <div class="container" id="app">
+        <div class="card card-register mx-auto mt-5">
+            <div class="card-header">Register an Account</div>
+            <div class="card-body">
+                <form v-on:submit="send">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <label for="exampleInputName">First name</label>
+                                <input class="form-control" id="exampleInputName" type="text" v-model="fname" aria-describedby="nameHelp" placeholder="Enter first name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="exampleInputLastName">Last name</label>
+                                <input class="form-control" id="exampleInputLastName" type="text" v-model="lname" aria-describedby="nameHelp" placeholder="Enter last name" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input class="form-control" id="exampleInputEmail1" type="email" v-model="email" aria-describedby="emailHelp" placeholder="Enter email" required>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <label for="exampleInputPassword1">Password</label>
+                                <input class="form-control" id="exampleInputPassword1" type="password" v-model="password" placeholder="Password" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="exampleConfirmPassword">Confirm password</label>
+                                <input class="form-control" id="exampleConfirmPassword" type="password" v-model="confirm" placeholder="Confirm password" required>
+                            </div>
+                        </div>
+                    </div>
+                    <input class="btn btn-primary btn-block" value="Register" type="submit">
+                </form>
+                <div class="text-center">
+                    <a class="d-block small mt-3" href="/Home/login" >Login Page</a>
+                    <a class="d-block small" >Forgot Password?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap core JavaScript-->
+    <script src="~/Content/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Content/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="~/Content/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.18/vue.min.js"></script>
+    <script>
+
+        new Vue({
+            el: '#app',
+            data: {
+                    fname: '',
+                    lname: '',
+                    email: '',
+                    password: '',
+                    confirm: '',
+                minNumberofChars: 6,
+                maxNumberofChars: 16
+               
+                },
+            methods: {
+                send: function (e) {
+                    e.preventDefault();
+                    if (this.validate()) {
+                        const requestOptions = {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                firstname: this.fname,
+                                lastname: this.lname,
+                                email: this.email,
+                                password: this.password
+                            })
+                        };
+                        fetch("https://localhost:44319/api/Bitusers", requestOptions)
+                            .then(response => response.json())
+                            .then((data) => this.onSuccess())
+                            .catch((err) => this.onFailure())
+                            
+                    }
+
+                },
+                validate: function () {
+
+                   
+                    if (this.password.length < 8) {
+                        alert("Your password must be at least 8 characters");
+                        return false;
+                    }
+                    if (this.password.search(/[a-z]/i) < 0) {
+                        alert("Your password must contain at least one letter.");
+                        return false;
+                    }
+                    if (this.password.search(/[0-9]/) < 0) {
+                        alert("Your password must contain at least one digit.");
+                        return false;
+                    }                   
+                    if (this.password != this.confirm) {
+                        alert("Two Password fields are not matching.");
+                        return false;
+                    }
+                    return true;
+                },
+                onSuccess: function () {
+                    alert("User Signed Up successfully!");
+                    this.lname = '';
+                    this.fname = '';
+                    this.email = '';
+                    this.password = '';
+                    this.confirm = '';
+                },
+                onFailure: function () {
+                    alert("User Signed Up Failure!");                   
+                }
+
+            }
+        })
+    </script>
+</body>
+
